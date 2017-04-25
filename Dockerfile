@@ -1,18 +1,21 @@
 FROM mjmg/centos-mro-rstudio-opencpu-shiny-server
 
+# Setup NVIDIA CUDA runtime
+# From https://gitlab.com/nvidia/cuda/blob/centos7/8.0/runtime/Dockerfile
+# LABEL maintainer "NVIDIA CORPORATION <cudatools@nvidia.com>"
+
 LABEL com.nvidia.volumes.needed="nvidia_driver"
 
 RUN NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
-    curl -fsSL  http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2af80.pub  | sed '/^Version/d' > /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA && \
+    curl -fsSL http://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/7fa2af80.pub | sed '/^Version/d' > /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA && \
     echo "$NVIDIA_GPGKEY_SUM  /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA" | sha256sum -c --strict -
 
 COPY cuda.repo /etc/yum.repos.d/cuda.repo
 
-ENV CUDA_VERSION 8.0
-LABEL com.nvidia.cuda.version="8.0"
+ENV CUDA_VERSION 8.0.61
+LABEL com.nvidia.cuda.version="${CUDA_VERSION}"
 
-ENV CUDA_PKG_VERSION 8-0-8.0.61-1
-RUN yum --enablerepo=cuda clean metadata
+ENV CUDA_PKG_VERSION 8-0-$CUDA_VERSION-1
 RUN yum install -y \
         cuda-nvrtc-$CUDA_PKG_VERSION \
         cuda-nvgraph-$CUDA_PKG_VERSION \
@@ -23,26 +26,21 @@ RUN yum install -y \
         cuda-cusparse-$CUDA_PKG_VERSION \
         cuda-npp-$CUDA_PKG_VERSION \
         cuda-cudart-$CUDA_PKG_VERSION && \
-    ln -s cuda-$CUDA_VERSION /usr/local/cuda && \
+    ln -s cuda-8.0 /usr/local/cuda && \
     rm -rf /var/cache/yum/*
 
-RUN echo "/usr/local/cuda/lib" >> /etc/ld.so.conf.d/cuda.conf && \
-    echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/cuda.conf && \
-    echo "/usr/local/cuda/lib64/stubs" >> /etc/ld.so.conf.d/cuda.conf && \
-    echo "/usr/local/cuda/targets/x86_64-linux/lib/" >> /etc/ld.so.conf.d/cuda.conf && \
+RUN echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/cuda.conf && \
     ldconfig
-
-RUN mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
 
 RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf && \
-    ldconfig
+    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH} && \
     ldconfig
 
+# Setup NVIDIA CUDA devel
+# From https://gitlab.com/nvidia/cuda/blob/centos7/8.0/devel/Dockerfile
 RUN yum install -y \
         cuda-core-$CUDA_PKG_VERSION \
         cuda-misc-headers-$CUDA_PKG_VERSION \
@@ -61,15 +59,22 @@ RUN yum install -y \
         cuda-driver-dev-$CUDA_PKG_VERSION && \
     rm -rf /var/cache/yum/*
 
-ENV CUDNN_VERSION 5.1.10
-LABEL com.nvidia.cudnn.version="5"
+# Setup NVIDIA CUDNN 6 devel
+# From https://gitlab.com/nvidia/cuda/blob/centos7/8.0/devel/cudnn6/Dockerfile
+ENV CUDNN_VERSION 6.0.20
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 
-RUN CUDNN_DOWNLOAD_SUM=c10719b36f2dd6e9ddc63e3189affaa1a94d7d027e63b71c3f64d449ab0645ce && \
-    curl -fsSL http://developer.download.nvidia.com/compute/redist/cudnn/v5.1/cudnn-8.0-linux-x64-v5.1.tgz -O && \
-    echo "$CUDNN_DOWNLOAD_SUM  cudnn-8.0-linux-x64-v5.1.tgz" | sha256sum -c --strict - && \
-    tar -xzf cudnn-8.0-linux-x64-v5.1.tgz -C /usr/local --wildcards 'cuda/lib64/libcudnn.so.*' && \
-    rm cudnn-8.0-linux-x64-v5.1.tgz && \
+RUN CUDNN_DOWNLOAD_SUM=36e7cd54d9f4cd448c302a40d2ed530a643e3ae32797a67739448ebe7c9f0620 && \
+    curl -fsSL http://developer.download.nvidia.com/compute/redist/cudnn/v6.0/cudnn-8.0-linux-x64-v6.0.tgz -O && \
+    echo "$CUDNN_DOWNLOAD_SUM  cudnn-8.0-linux-x64-v6.0.tgz" | sha256sum -c - && \
+    tar --no-same-owner -xzf cudnn-8.0-linux-x64-v6.0.tgz -C /usr/local && \
+    rm cudnn-8.0-linux-x64-v6.0.tgz && \
     ldconfig
+
+    
+# Configure NVIDIA/CUDA OpenCL settings
+RUN mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
 
 RUN \
     ln -s /usr/local/cuda/lib64/libOpenCL.so /usr/lib64/libOpenCL.so
