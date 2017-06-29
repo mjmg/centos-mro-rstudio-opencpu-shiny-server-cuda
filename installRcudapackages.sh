@@ -68,5 +68,11 @@ Rscript -e "library(devtools); install_github('mjmg/bigWig')"
 echo "Installing dREG from source"
 Rscript -e "library(devtools); install_github('mjmg/dREG')"
 echo "Installing Rgtsvm from source"
-Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=/usr/lib64/microsoft-r/3.4/lib64/R/library/BH')"
+#Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=/usr/lib64/microsoft-r/3.4/lib64/R/library/BH')"
+cd /tmp/
+git clone https://github.com/Danko-Lab/Rgtsvm.git
+rm .//.git -rf
+MAKE="make -j7" #note this make the compile process use 7 threads
+cd Rgtsvm
+R CMD INSTALL --configure-args="--with-cuda-home=$CUDA_HOME --with-boost-home=/usr/lib64/microsoft-r/3.4/lib64/R/library/BH" Rgtsvm
 
