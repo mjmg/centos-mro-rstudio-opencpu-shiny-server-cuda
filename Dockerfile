@@ -59,29 +59,22 @@ RUN yum install -y \
         cuda-driver-dev-$CUDA_PKG_VERSION && \
     rm -rf /var/cache/yum/*
 
-# Setup NVIDIA CUDNN 6 devel
-# From https://gitlab.com/nvidia/cuda/blob/centos7/8.0/devel/cudnn6/Dockerfile
-ENV CUDNN_VERSION 6.0.20
-LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
-
-RUN CUDNN_DOWNLOAD_SUM=9b09110af48c9a4d7b6344eb4b3e344daa84987ed6177d5c44319732f3bb7f9c && \
-    curl -fsSL http://developer.download.nvidia.com/compute/redist/cudnn/v6.0/cudnn-8.0-linux-x64-v6.0.tgz -O && \
-    echo "$CUDNN_DOWNLOAD_SUM  cudnn-8.0-linux-x64-v6.0.tgz" | sha256sum -c - && \
-    tar --no-same-owner -xzf cudnn-8.0-linux-x64-v6.0.tgz -C /usr/local && \
-    rm cudnn-8.0-linux-x64-v6.0.tgz && \
-    ldconfig
-
     
 # Configure NVIDIA/CUDA OpenCL settings
 RUN mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
 
 RUN \
-    ln -s /usr/local/cuda/lib64/libOpenCL.so /usr/lib64/libOpenCL.so
+    ln -s /usr/local/cuda/lib64/libOpenCL.so /usr/lib64/libOpenCL.so 
 
-ENV LIBRARY_PATH /usr/local/cuda/lib64/:/usr/local/cuda/lib64/stubs:${LIBRARY_PATH} && \
+ENV LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:${LIBRARY_PATH} && \
     ldconfig
-ENV CUDA_HOME /usr/local/cuda/
+
+RUN \
+  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1 && \
+  ldconfig
+
+ENV CUDA_HOME /usr/local/cuda
 ENV OPENCL_LIB /usr/local/cuda/lib64/
 
 #install additional tools and library prerequisites for additional packages
@@ -90,15 +83,14 @@ RUN \
 
 # install additional packages
 WORKDIR /tmp
-
 RUN \
-  MAKE="make -j7"
-
+  MAKE="make $(nproc)"
 ADD \
   installRcudapackages.sh /tmp/installRcudapackages.sh
 RUN \
   chmod +x /tmp/installRcudapackages.sh && \
   /tmp/installRcudapackages.sh
+
 
 USER shiny
 
@@ -112,3 +104,4 @@ USER root
 
 # Define default command.
 CMD ["/usr/bin/supervisord","-c","/etc/supervisor/supervisord.conf"]
+
