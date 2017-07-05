@@ -83,8 +83,10 @@ RUN \
 
 # install additional packages
 WORKDIR /tmp
-RUN \
-  MAKE="make $(nproc)"
+
+#RUN \
+#  MAKE="make $(nproc)"
+
 ADD \
   installRcudapackages.sh /tmp/installRcudapackages.sh
 RUN \

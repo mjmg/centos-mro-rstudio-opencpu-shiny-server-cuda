@@ -1,7 +1,5 @@
 #!/bin/sh
 
-echo "Installing testthat from MRAN"
-Rscript -e "install.packages('testthat')"
 echo "Installing assertive from MRAN"
 Rscript -e "install.packages('assertive')"
 echo "Installing RcppEigen from MRAN"
@@ -29,13 +27,12 @@ rm ./gpuR/.git -rf
 R CMD INSTALL gpuR --no-test-load
 
 
-echo "Installing bit64 from MRAN"
-Rscript -e "install.packages('bit64')"
-
-
 echo "Installing gputools from MRAN"
 Rscript -e "install.packages('gputools')"
 
+
+echo "Installing bit64 from MRAN"
+Rscript -e "install.packages('bit64')"
 
 echo "Installing Rgtsvm from github"
 Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=/usr/lib64/microsoft-r/3.4/lib64/R/library/BH --with-cuda-home=$CUDA_HOME')"
