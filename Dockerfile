@@ -59,7 +59,6 @@ RUN yum install -y \
         cuda-driver-dev-$CUDA_PKG_VERSION && \
     rm -rf /var/cache/yum/*
 
-    
 # Configure NVIDIA/CUDA OpenCL settings
 RUN mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
@@ -101,6 +100,14 @@ RUN \
   rm -Rv /srv/shiny-server/rmd && \
   ln  /home/shiny/R/shiny-server/apps /srv/shiny-server/ -s && \
   ln  /home/shiny/R/shiny-server/rmd /srv/shiny-server/ -s
+
+#ADD \
+#  .Rprofile /home/shiny/.Rprofile
+
+#RUN \
+#  mkdir /home/shiny/R/ && \
+#  mkdir /home/shiny/R/x86_64-pc-linux-gnu-library/ && \
+#  mkdir /home/shiny/R/x86_64-pc-linux-gnu-library/3.4
 
 USER root
 
