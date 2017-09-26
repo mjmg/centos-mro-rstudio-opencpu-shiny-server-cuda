@@ -90,6 +90,7 @@ ADD \
   installRcudapackages.sh /tmp/installRcudapackages.sh
 RUN \
   chmod +x /tmp/installRcudapackages.sh && \
+  sync && \
   /tmp/installRcudapackages.sh
 
 
