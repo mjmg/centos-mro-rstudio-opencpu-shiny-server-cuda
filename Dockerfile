@@ -78,7 +78,7 @@ RUN \
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
 
 RUN \
-  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1 && \
+  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
   ldconfig
 
 ENV CUDA_HOME /usr/local/cuda
