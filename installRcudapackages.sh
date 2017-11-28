@@ -18,6 +18,7 @@ R CMD INSTALL gmatrix_0.3.tar.gz --no-test-load
 echo "Installing cdeterman/RViennaCL from github"
 Rscript -e "library(devtools); install_github('cdeterman/RViennaCL')"
 
+
 echo "Installing cdeterman/gpuR from github"
 #Rscript -e "library(devtools); install_github('cdeterman/gpuR')"
 #Rscript -e "library(devtools); install_github('cdeterman/gpuR', INSTALL_opts='--no-test-load')"
@@ -34,8 +35,10 @@ Rscript -e "install.packages('gputools')"
 echo "Installing bit64 from MRAN"
 Rscript -e "install.packages('bit64')"
 
+
 echo "Installing Rgtsvm from github"
-Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=/usr/lib64/microsoft-r/3.4/lib64/R/library/BH --with-cuda-home=$CUDA_HOME')"
+BOOST_HOME="/opt/microsoft/ropen/$MRO_VERSION/lib64/R/library/BH"
+Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=$BOOST_HOME --with-cuda-home=$CUDA_HOME')"
 
 
 #echo "Installing gcbd from CRAN"

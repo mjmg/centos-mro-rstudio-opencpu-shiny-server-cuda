@@ -13,11 +13,14 @@ COPY cuda.repo /etc/yum.repos.d/cuda.repo
 ENV CUDA_VERSION 8.0.61
 
 ENV CUDA_PKG_VERSION 8-0-$CUDA_VERSION-1
+
+ENV CUBLAS_VERSION CUDA_PKG_VERSION.2-1
+
 RUN yum install -y \
         cuda-nvrtc-$CUDA_PKG_VERSION \
         cuda-nvgraph-$CUDA_PKG_VERSION \
         cuda-cusolver-$CUDA_PKG_VERSION \
-        cuda-cublas-8-0-8.0.61.2-1 \
+        cuda-cublas-$CUBLAS_VERSION \
         cuda-cufft-$CUDA_PKG_VERSION \
         cuda-curand-$CUDA_PKG_VERSION \
         cuda-cusparse-$CUDA_PKG_VERSION \
@@ -34,23 +37,15 @@ RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+
+# Library Path at RUN time
 ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
 
 # nvidia-container-runtime
 ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV NVIDIA_DRIVER_CAPABILITIES all
+#compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=8.0"
-
-
-#RUN echo "/usr/local/cuda/lib64" >> /etc/ld.so.conf.d/cuda.conf && \
-#    ldconfig
-
-#RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-#    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
-
-#ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-#ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH} && \
-#    ldconfig
 
 # Setup NVIDIA CUDA devel
 # From https://gitlab.com/nvidia/cuda/blob/centos7/8.0/devel/Dockerfile
@@ -79,12 +74,12 @@ RUN mkdir -p /etc/OpenCL/vendors && \
 RUN \
     ln -s /usr/local/cuda/lib64/libOpenCL.so /usr/lib64/libOpenCL.so 
 
-#ENV LIBRARY_PATH /usr/local/cuda/lib64:/usr/local/cuda/lib64/stubs:${LIBRARY_PATH} && \
-#    ldconfig
+# Library Path at BUILD time
+ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
 
-#RUN \
-#  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1 && \
-#  ldconfig
+RUN \
+  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1 && \
+  ldconfig
 
 ENV CUDA_HOME /usr/local/cuda
 ENV OPENCL_LIB /usr/local/cuda/lib64/
@@ -95,9 +90,6 @@ RUN \
 
 # install additional packages
 WORKDIR /tmp
-
-#RUN \
-#  MAKE="make $(nproc)"
 
 ADD \
   installRcudapackages.sh /tmp/installRcudapackages.sh
@@ -114,14 +106,6 @@ RUN \
   rm -Rv /srv/shiny-server/rmd && \
   ln  /home/shiny/R/shiny-server/apps /srv/shiny-server/ -s && \
   ln  /home/shiny/R/shiny-server/rmd /srv/shiny-server/ -s
-
-#ADD \
-#  .Rprofile /home/shiny/.Rprofile
-
-#RUN \
-#  mkdir /home/shiny/R/ && \
-#  mkdir /home/shiny/R/x86_64-pc-linux-gnu-library/ && \
-#  mkdir /home/shiny/R/x86_64-pc-linux-gnu-library/3.4
 
 USER root
 
