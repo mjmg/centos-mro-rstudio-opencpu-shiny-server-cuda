@@ -14,13 +14,11 @@ ENV CUDA_VERSION 8.0.61
 
 ENV CUDA_PKG_VERSION 8-0-$CUDA_VERSION-1
 
-ENV CUBLAS_VERSION CUDA_PKG_VERSION.2-1
-
 RUN yum install -y \
         cuda-nvrtc-$CUDA_PKG_VERSION \
         cuda-nvgraph-$CUDA_PKG_VERSION \
         cuda-cusolver-$CUDA_PKG_VERSION \
-        cuda-cublas-$CUBLAS_VERSION \
+        cuda-cublas-8-0-8.0.61.2-1 \
         cuda-cufft-$CUDA_PKG_VERSION \
         cuda-curand-$CUDA_PKG_VERSION \
         cuda-cusparse-$CUDA_PKG_VERSION \
@@ -77,9 +75,9 @@ RUN \
 # Library Path at BUILD time
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
 
-RUN \
-  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/stubs/libcuda.so.1 && \
-  ldconfig
+#RUN \
+#  ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/local/cuda/lib64/libcuda.so.1 && \
+#  ldconfig
 
 ENV CUDA_HOME /usr/local/cuda
 ENV OPENCL_LIB /usr/local/cuda/lib64/
