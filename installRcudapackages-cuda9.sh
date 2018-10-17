@@ -33,8 +33,8 @@ rm ./gpuR/.git -rf
 R CMD INSTALL gpuR --no-test-load
 
 
-echo "Installing patched mjmg/gputools from github"
-git clone https://github.com/mjmg/gputools.git
+echo "Installing nullsatz/gputools from github"
+git clone https://github.com/nullsatz/gputools.git
 rm ./gputools/.git -rf
 R CMD INSTALL gputools --no-test-load
 #Rscript -e "install.packages('gputools')"

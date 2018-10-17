@@ -1,9 +1,5 @@
 #!/bin/sh
 
-
-echo "Installing eddelbuettel/bh from github"
-Rscript -e "library(devtools); install_github('eddelbuettel/bh')"
-
 echo "Installing assertive from MRAN"
 Rscript -e "install.packages('assertive')"
 echo "Installing RcppEigen from MRAN"
@@ -17,7 +13,7 @@ git clone https://github.com/njm18/gmatrix.git
 rm ./gmatrix/.git -rf
 #R CMD build gmatrix
 #R CMD INSTALL gmatrix_0.3.tar.gz --no-test-load
-R CMD INSTALL gmatrix --no-test-load --configure-args="--with-arch=sm_30"
+R CMD INSTALL gmatrix --no-test-load
 
 
 echo "Installing cdeterman/RViennaCL from github"
@@ -33,8 +29,8 @@ rm ./gpuR/.git -rf
 R CMD INSTALL gpuR --no-test-load
 
 
-echo "Installing patched mjmg/gputools from github"
-git clone https://github.com/mjmg/gputools.git
+echo "Installing nullsatz/gputools from github"
+git clone https://github.com/nullsatz/gputools.git
 rm ./gputools/.git -rf
 R CMD INSTALL gputools --no-test-load
 #Rscript -e "install.packages('gputools')"
@@ -49,8 +45,6 @@ BOOST_HOME="/opt/microsoft/ropen/$MRO_VERSION/lib64/R/library/BH"
 git clone https://github.com/Danko-Lab/Rgtsvm.git
 rm ./Rgtsvm/.git -rf
 cd Rgtsvm
-sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure
-sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure.ac
 R CMD INSTALL --configure-args="--with-cuda-home=$CUDA_HOME --with-boost-home=$BOOST_HOME" Rgtsvm --no-test-load
 #Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=$BOOST_HOME --with-cuda-home=$CUDA_HOME')"
 
