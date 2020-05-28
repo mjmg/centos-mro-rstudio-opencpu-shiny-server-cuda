@@ -44,18 +44,18 @@ echo "Installing bit64 from MRAN"
 Rscript -e "install.packages('bit64')"
 
 
-#updateb
-#locate cublas.h
+updateb
+locate cublas.h
 
 echo "Installing Rgtsvm from github"
 BOOST_HOME="/opt/microsoft/ropen/$MRO_VERSION/lib64/R/library/BH"
-#git clone https://github.com/Danko-Lab/Rgtsvm.git
-#rm ./Rgtsvm/.git -rf
-#cd Rgtsvm
-#sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure
-#sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure.ac
-#R CMD INSTALL --configure-args="--with-cuda-home=$CUDA_HOME --with-boost-home=$BOOST_HOME" Rgtsvm --no-test-load
-Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=$BOOST_HOME --with-cuda-home=$CUDA_HOME')"
+git clone https://github.com/Danko-Lab/Rgtsvm.git
+rm ./Rgtsvm/.git -rf
+cd Rgtsvm
+sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure
+sed -i 's/sm_20/sm_30/g' /tmp/Rgtsvm/Rgtsvm/configure.ac
+R CMD INSTALL --configure-args="--with-cuda-home=$CUDA_HOME --with-boost-home=$BOOST_HOME" Rgtsvm --no-test-load
+#Rscript -e "library(devtools); install_github('Danko-Lab/Rgtsvm', subdir ='Rgtsvm', args='--configure-args=--with-boost-home=$BOOST_HOME --with-cuda-home=$CUDA_HOME')"
 
 #echo "Installing gcbd from CRAN"
 #Rscript -e "install.packages('gcbd')"
