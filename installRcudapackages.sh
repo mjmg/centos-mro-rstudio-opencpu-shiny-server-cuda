@@ -43,7 +43,7 @@ R CMD INSTALL gputools --no-test-load
 echo "Installing bit64 from MRAN"
 Rscript -e "install.packages('bit64')"
 
-
+dnf install -y mlocate
 updateb
 locate cublas.h
 
