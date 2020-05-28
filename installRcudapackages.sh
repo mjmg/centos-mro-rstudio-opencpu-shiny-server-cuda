@@ -44,7 +44,7 @@ echo "Installing bit64 from MRAN"
 Rscript -e "install.packages('bit64')"
 
 dnf install -y mlocate
-updateb
+updatedb
 locate cublas.h
 
 echo "Installing Rgtsvm from github"
