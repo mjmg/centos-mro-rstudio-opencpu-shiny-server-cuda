@@ -15,7 +15,8 @@ ENV CUDA_VERSION 9.2.148
 ENV CUDA_PKG_VERSION 9-2-$CUDA_VERSION-1
 # For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
 RUN yum install -y \
-cuda-cudart-$CUDA_PKG_VERSION \
+cuda-cudart-9-2-9.2.88-1 \
+#cuda-cudart-$CUDA_PKG_VERSION \
 && \
     ln -s cuda-9.2 /usr/local/cuda && \
     rm -rf /var/cache/yum/*
