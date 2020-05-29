@@ -66,8 +66,11 @@ ENV OPENCL_LIB /usr/local/cuda/lib64/
 
 #install additional tools and library prerequisites for additional packages
 RUN \
-  yum install -y opencl-headers mesa-libGL-devel mysql-devel
+  yum install -y opencl-headers mesa-libGL-devel mysql-devel mlocate
 
+RUN \
+    locate cuda
+    
 # install additional packages
 WORKDIR /tmp
 
