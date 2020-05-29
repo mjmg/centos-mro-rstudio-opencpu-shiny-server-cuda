@@ -45,7 +45,16 @@ Rscript -e "install.packages('bit64')"
 
 dnf install -y mlocate
 updatedb
+ls
 locate cublas.h
+
+
+ln -s /usr/include/cublas.h /usr/local/cuda/include/ -s
+ln -s /usr/include/cublasLt.h /usr/local/cuda/include/ -s
+ln -s /usr/include/cublasXt.h /usr/local/cuda/include/ -s
+ln -s /usr/include/cublas_api.h /usr/local/cuda/include/ -s
+ln -s /usr/include/cublas_v2.h /usr/local/cuda/include/ -s
+ln -s /usr/include/nvblas.h /usr/local/cuda/include/ -s
 
 echo "Installing Rgtsvm from github"
 BOOST_HOME="/opt/microsoft/ropen/$MRO_VERSION/lib64/R/library/BH"
