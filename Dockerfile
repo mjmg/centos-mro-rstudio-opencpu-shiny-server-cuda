@@ -75,7 +75,7 @@ ENV OPENCL_LIB /usr/local/cuda/lib64/
 
 #install additional tools and library prerequisites for additional packages
 RUN \
-  yum install -y opencl-headers mesa-libGL-devel mysql-devel
+  dnf install -y opencl-headers mesa-libGL-devel mysql-devel libgcc.i686
 
 # install additional packages
 WORKDIR /tmp
