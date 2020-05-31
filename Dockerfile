@@ -73,20 +73,6 @@ ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
 ENV CUDA_HOME /usr/local/cuda
 ENV OPENCL_LIB /usr/local/cuda/lib64/
 
-#install additional tools and library prerequisites for additional packages
-RUN \
-  dnf install -y opencl-headers mesa-libGL-devel mysql-devel glibc-devel.i686
-
-# install additional packages
-WORKDIR /tmp
-
-#ADD \
-#  installRcudapackages.sh /tmp/installRcudapackages.sh
-#RUN \
-#  chmod +x /tmp/installRcudapackages.sh && \
-#  sync && \
-#  /tmp/installRcudapackages.sh
-
 USER shiny
 
 RUN \
@@ -94,6 +80,21 @@ RUN \
   rm -Rv /srv/shiny-server/rmd && \
   ln  /home/shiny/R/shiny-server/apps /srv/shiny-server/ -s && \
   ln  /home/shiny/R/shiny-server/rmd /srv/shiny-server/ -s
+
+#install additional tools and library prerequisites for additional packages
+RUN \
+  dnf install -y opencl-headers mesa-libGL-devel mysql-devel glibc-devel.i686
+
+# install additional packages
+WORKDIR /tmp
+
+ADD \
+  installRcudapackages.sh /tmp/installRcudapackages.sh
+RUN \
+  chmod +x /tmp/installRcudapackages.sh && \
+#  sync && \
+  /tmp/installRcudapackages.sh
+
 
 USER root
 
